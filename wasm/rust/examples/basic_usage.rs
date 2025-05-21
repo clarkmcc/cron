@@ -45,15 +45,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Daily at midnight: Next = {}", daily.next(&now)?);
 
     // Weekdays at 9am
-    let weekday = Schedule::parse("0 0 9 * * 1-5")?;
+    let weekday = Schedule::parse_with_options("0 */5 * * * *", ParseOptions::new(STANDARD_WITH_SECONDS))?;
     println!("Weekdays at 9am: Next = {}", weekday.next(&now)?);
 
     // Every 15 minutes
-    let every15min = Schedule::parse("0 */15 * * * *")?;
+    let every15min = Schedule::parse_with_options("0 */5 * * * *", ParseOptions::new(STANDARD_WITH_SECONDS))?;
     println!("Every 15 minutes: Next = {}", every15min.next(&now)?);
 
     // Monthly on the 1st at midnight
-    let monthly = Schedule::parse("0 0 0 1 * *")?;
+    let monthly = Schedule::parse_with_options("0 */5 * * * *", ParseOptions::new(STANDARD_WITH_SECONDS))?;
     println!("Monthly on the 1st: Next = {}", monthly.next(&now)?);
 
     Ok(())

@@ -122,6 +122,8 @@ Additionally, this library supports:
 
 This SDK uses Extism to run a Go plugin that exposes the functionality of the Go cron library. The Rust SDK loads this plugin and provides a clean API to interact with it.
 
+The WASM plugin is embedded directly into the SDK as a binary resource, so you don't need to build or distribute the plugin separately. When the SDK is used, it will automatically extract the plugin to a temporary file if needed. You can also specify a custom plugin path by setting the `CRON_PLUGIN_PATH` environment variable.
+
 Unlike the previous implementation that used JavaScript WASM, this version uses Extism which is designed for language interoperability in service contexts rather than web browsers.
 
 ## Benchmarks

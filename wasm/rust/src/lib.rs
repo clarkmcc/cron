@@ -10,6 +10,9 @@ use std::sync::{Arc, Mutex, Once};
 use thiserror::Error;
 use crate::options::STANDARD;
 
+// Include the generated plugin data module
+include!(concat!(env!("OUT_DIR"), "/plugin_data.rs"));
+
 // Static initialization
 static INIT: Once = Once::new();
 static mut PLUGIN_INSTANCE: Option<Arc<Mutex<Plugin>>> = None;
@@ -236,14 +239,19 @@ fn ensure_plugin_initialized() -> Result<()> {
 
 /// Initialize the plugin
 fn init_plugin() -> Result<Plugin> {
-    // Get the path to the plugin
-    let plugin_path = std::env::var("CRON_PLUGIN_PATH")
-        .map_err(|_| CronError::PluginInitError("CRON_PLUGIN_PATH not set".to_string()))?;
+    // Try to get the path from the environment variable
+    let wasm = match std::env::var("CRON_PLUGIN_PATH") {
+        Ok(plugin_path) => {
+            // If the environment variable is set, use that path
+            Wasm::file(plugin_path)
+        }
+        Err(_) => {
+            // If the environment variable is not set, use the embedded plugin data
+            // Create a temporary directory to store the plugin
+            Wasm::data(PLUGIN_DATA)
+        }
+    };
 
-    // Create a context
-    // Load the plugin
-    println!("{}", plugin_path);
-    let wasm = Wasm::file(plugin_path);
     let manifest = Manifest::new([wasm]);
     let plugin = Plugin::new(&manifest, [], true)
         .map_err(|e| CronError::PluginInitError(format!("Failed to load plugin: {}", e)))?;
