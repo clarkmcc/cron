@@ -9,7 +9,7 @@ build-plugin:
 	@echo "Building Go Extism plugin..."
 	@mkdir -p $(WASM_OUT_DIR)
 	cd $(GO_DIR) && go mod tidy
-	cd $(GO_DIR) && tinygo build -target wasi -o ../$(WASM_OUT_DIR)/cron.wasm .
+	cd $(GO_DIR) && tinygo build -no-debug -target wasi -opt=2 -scheduler=none -o ../$(WASM_OUT_DIR)/cron.wasm .
 	@wasm-opt --enable-bulk-memory -Oz -o $(WASM_OUT_DIR)/cron.opt.wasm $(WASM_OUT_DIR)/cron.wasm
 	@mv $(WASM_OUT_DIR)/cron.opt.wasm $(WASM_OUT_DIR)/cron.wasm
 	@echo "Extism plugin build complete. Output in $(WASM_OUT_DIR)/"
